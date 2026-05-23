@@ -5,7 +5,7 @@ use App\Models\User;
 return [
 
     'defaults' => [
-        'guard' => 'web',   // لازم web حتى Auth::attempt يشتغل
+        'guard' => 'web',   
         'passwords' => 'users',
     ],
 
@@ -15,7 +15,7 @@ return [
             'provider' => 'users',
         ],
 
-        // Sanctum guard للتوكنات فقط
+       
         'sanctum' => [
             'driver' => 'sanctum',
             'provider' => 'users',

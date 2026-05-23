@@ -11,8 +11,7 @@ class ServiceCategory extends Model
 
     protected $fillable = ['name', 'description'];
 
-    public $timestamps = true; // غيّرها حسب جدولك
-
+    public $timestamps = true;
     public function professionals()
     {
         return $this->hasMany(Professional::class, 'category_id');

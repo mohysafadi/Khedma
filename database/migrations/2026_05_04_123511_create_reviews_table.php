@@ -26,7 +26,7 @@ return new class extends Migration
                   ->constrained('service_requests', 'request_id')
                   ->cascadeOnDelete();
 
-            $table->integer('rating'); // 1 - 5
+            $table->integer('rating'); 
             $table->text('comment')->nullable();
 
             $table->timestamp('created_at')->useCurrent();
