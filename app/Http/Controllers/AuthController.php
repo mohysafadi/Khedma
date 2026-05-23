@@ -11,9 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    // -----------------------------------------
-    // 1) REGISTER - الخطوة الأولى
-    // -----------------------------------------
+    //  الخطوة الأولى
     public function register(Request $request)
     {
         $data = $request->validate([
@@ -38,10 +36,8 @@ class AuthController extends Controller
             'token'   => $token,
         ], 201);
     }
-
-    // -----------------------------------------
-    // 2) COMPLETE BASIC INFO - الخطوة الثانية
-    // -----------------------------------------
+ 
+    //  الخطوة الثانية
     public function completeBasicInfo(Request $request)
     {
         $data = $request->validate([
@@ -83,9 +79,9 @@ class AuthController extends Controller
         ]);
     }
 
-    // -----------------------------------------
-    // 3) COMPLETE PROFESSIONAL INFO - الخطوة الثالثة
-    // -----------------------------------------
+   
+    //  الخطوة الثالثة
+   
     public function completeProfessionalInfo(Request $request)
     {
         $data = $request->validate([
@@ -120,33 +116,29 @@ class AuthController extends Controller
             'tool_image_path' => $toolImagePath
         ]);
     }
-    // فوق مع use
-
-    // -----------------------------------------
-    // 4) LOGIN - تسجيل الدخول
-    // -----------------------------------------
+    //  تسجيل الدخول
     public function login(Request $request)
     {
-        // 1) التحقق من البيانات
+        //  التحقق من البيانات
         $credentials = $request->validate([
             'email'    => 'required|email',
             'password' => 'required|string',
         ]);
 
-        // 2) محاولة تسجيل الدخول
+        //  محاولة تسجيل الدخول
         if (!Auth::attempt($credentials)) {
             return response()->json([
                 'message' => 'Invalid email or password',
             ], 401);
         }
 
-        // 3) جلب المستخدم بعد نجاح تسجيل الدخول
+        //  جلب المستخدم بعد نجاح تسجيل الدخول
         $user = Auth::user();
 
         // 4) إنشاء توكن جديد
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        // 5) إرجاع الرد
+        //  إرجاع الرد
         return response()->json([
             'message' => 'Login successful',
             'user_id' => $user->user_id,
