@@ -10,8 +10,8 @@ class Customer extends Model
 
     protected $fillable = [
         'user_id',
-        'governorate',
-        'city',
+        'governorate_id',
+        'city_id',
     ];
 
     public function user()
@@ -27,5 +27,14 @@ class Customer extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class, 'customer_id');
+    }
+    public function governorate()
+    {
+        return $this->belongsTo(Governorate::class, 'governorate_id');
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city_id');        
     }
 }

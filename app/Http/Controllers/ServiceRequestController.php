@@ -2,64 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ServiceRequest;
 use Illuminate\Http\Request;
+use App\Models\ServiceRequest;
 
 class ServiceRequestController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'category_id' => 'required|exists:service_categories,category_id',
+            'description' => 'required|string',
+            'address' => 'required|string|max:255',
+            'photo' => 'required|image|max:4096'
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(ServiceRequest $serviceRequest)
-    {
-        //
-    }
+        // رفع الصورة
+        $photoPath = $request->file('photo')->store('service_requests', 'public');
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(ServiceRequest $serviceRequest)
-    {
-        //
-    }
+        // إنشاء الطلب
+        $serviceRequest = ServiceRequest::create([
+            'customer_id' => $request->user()->customer->customer_id,
+            'category_id' => $request->category_id,
+            'description' => $request->description,
+            'address' => $request->address,
+            'photo' => $photoPath,
+            'status' => 'pending'
+        ]);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, ServiceRequest $serviceRequest)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(ServiceRequest $serviceRequest)
-    {
-        //
+        return response()->json([
+            'message' => 'تم إرسال الطلب بنجاح',
+            'request' => $serviceRequest
+        ]);
     }
 }

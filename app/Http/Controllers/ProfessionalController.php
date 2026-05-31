@@ -7,6 +7,15 @@ use Illuminate\Http\Request;
 
 class ProfessionalController extends Controller
 {
+
+    public function getByCategory(Request $request)
+    {
+        $categoryId = $request->category_id;
+
+        $professionals = Professional::where('category_id', $categoryId)->get();
+
+        return response()->json($professionals);
+    }
     /**
      * Display a listing of the resource.
      */

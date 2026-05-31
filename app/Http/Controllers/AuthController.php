@@ -36,39 +36,40 @@ class AuthController extends Controller
             'token'   => $token,
         ], 201);
     }
- 
+
     //  الخطوة الثانية
     public function completeBasicInfo(Request $request)
     {
         $data = $request->validate([
-            'user_id'     => 'required|exists:users,user_id',
-            'role'        => 'required|in:customer,professional',
-            'phone'       => 'required|string|max:20',
-
-            // Customer
-            'governorate' => 'required|string|max:255',
-            'city'        => 'required_if:role,customer|string|max:255',
+            'user_id'        => 'required|exists:users,user_id',
+            'role'           => 'required|in:customer,professional',
+            'phone'          => 'required|string|max:20',
+            'governorate_id' => 'required|integer',
+            'city_id'        => 'required_if:role,customer|integer',
         ]);
 
         $user = User::find($data['user_id']);
 
+        // تحديث جدول users
         $user->update([
             'role'  => $data['role'],
             'phone' => $data['phone'],
         ]);
 
+        // إنشاء سجل customer
         if ($data['role'] === 'customer') {
             Customer::create([
-                'user_id'     => $user->user_id,
-                'governorate' => $data['governorate'],
-                'city'        => $data['city'],
+                'user_id'        => $user->user_id,   // ← ← ← هذا هو التعديل الوحيد
+                'governorate_id' => $data['governorate_id'],
+                'city_id'        => $data['city_id'],
             ]);
         }
 
+        // إنشاء سجل professional
         if ($data['role'] === 'professional') {
             Professional::create([
-                'user_id'     => $user->user_id,
-                'governorate' => $data['governorate'],
+                'user_id' => $user->user_id,
+                'governorate_id'  => $data['governorate_id'],
                 'professional_status' => 'pending',
             ]);
         }
@@ -78,10 +79,8 @@ class AuthController extends Controller
             'role'    => $data['role'],
         ]);
     }
-
-   
     //  الخطوة الثالثة
-   
+
     public function completeProfessionalInfo(Request $request)
     {
         $data = $request->validate([

@@ -55,4 +55,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(RequestChat::class, 'sender_id');
     }
+    public function governorate()
+    {
+        return $this->belongsTo(Governorate::class,'governorate_id');
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class,'city_id');
+    }
 }

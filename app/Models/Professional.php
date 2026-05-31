@@ -10,7 +10,7 @@ class Professional extends Model
 
     protected $fillable = [
         'user_id',
-        'governorate',
+        'governorate_id',
         'professional_status',
         'category_id',
         'experience_years',
@@ -41,5 +41,9 @@ class Professional extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class, 'professional_id');
+    }
+    public function governorate()
+    {
+        return $this->belongsTo(Governorate::class, 'governorate_id');
     }
 }

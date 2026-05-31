@@ -13,7 +13,7 @@ class ServiceRequest extends Model
         'category_id',
         'description',
         'address',
-        'photos',
+        'photo',
         'status',
     ];
 
