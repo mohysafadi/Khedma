@@ -109,6 +109,9 @@ class AuthController extends Controller
             'bio'              => $data['bio'],
             'tool_image'       => $toolImagePath,
         ]);
+        $professional->wallet()->create([
+            'balance' => 100
+        ]);
 
         return response()->json([
             'message' => 'Professional registration completed',

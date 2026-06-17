@@ -2,64 +2,51 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Wallet;
 use Illuminate\Http\Request;
+use App\Models\WalletTransaction;
 
 class WalletController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    // جلب رصيد المحفظة
+    public function show(Request $request)
     {
-        //
+        $professional = $request->user()->professional;
+
+        if (!$professional) {
+            return response()->json(['message' => 'هذا المستخدم ليس مهني'], 403);
+        }
+
+        $wallet = $professional->wallet;
+
+        return response()->json([
+            'balance' => $wallet->balance,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // جلب سجل العمليات
+    public function transactions(Request $request)
     {
-        //
-    }
+        $professional = $request->user()->professional;
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        if (!$professional) {
+            return response()->json(['message' => 'هذا المستخدم ليس مهني'], 403);
+        }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Wallet $wallet)
-    {
-        //
-    }
+        $wallet = $professional->wallet;
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Wallet $wallet)
-    {
-        //
-    }
+        $transactions = WalletTransaction::where('wallet_id', $wallet->wallet_id)
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($t) {
+                return [
+                    'date'   => $t->created_at->format('Y-m-d'),
+                    'type'   => $t->type,
+                    'amount' => $t->amount,
+                ];
+            });
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Wallet $wallet)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Wallet $wallet)
-    {
-        //
+        return response()->json([
+            'transactions' => $transactions
+        ]);
     }
 }
