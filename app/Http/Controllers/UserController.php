@@ -15,31 +15,40 @@ class UserController extends Controller
         $user = $request->user()->load(
             'customer.governorate',
             'customer.city',
-            'professional.governorate'
+            'professional.governorate',
+            'professional.category'
         );
 
+        // تحديد الموقع حسب الدور
         if ($user->role === 'customer') {
             $governorate = $user->customer->governorate->name ?? null;
-            $city = $user->customer->city->name ?? null;
+            $city        = $user->customer->city->name ?? null;
         } else {
             $governorate = $user->professional->governorate->name ?? null;
-            $city = null;
+            $city        = null;
         }
 
-        if ($governorate && $city) {
-            $location = $governorate . " – " . $city;
-        } elseif ($governorate) {
-            $location = $governorate;
-        } else {
-            $location = "غير محدد";
-        }
+        $location = $governorate
+            ? ($city ? "$governorate – $city" : $governorate)
+            : "غير محدد";
 
-        return response()->json([
-            'name' => $user->name,
-            'email' => $user->email,
-            'phone' => $user->phone,
+        // بيانات البروفايل الأساسية
+        $profile = [
+            'name'     => $user->name,
+            'email'    => $user->email,
+            'phone'    => $user->phone,
             'location' => $location,
-        ]);
+            'role'     => $user->role,
+        ];
+
+        // إضافة بيانات المهني فقط
+        if ($user->role === 'professional') {
+            $profile['experience_years'] = $user->professional->experience_years;
+            $profile['bio']              = $user->professional->bio;
+            $profile['category']         = $user->professional->category->name ?? null;
+        }
+
+        return response()->json($profile);
     }
 
     // ================================
@@ -54,14 +63,10 @@ class UserController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user) {
-            return response()->json([
-                'message' => 'الإيميل غير موجود'
-            ], 404);
+            return response()->json(['message' => 'الإيميل غير موجود'], 404);
         }
 
-        return response()->json([
-            'message' => 'الإيميل موجود ويمكنك إنشاء كلمة سر جديدة الآن'
-        ]);
+        return response()->json(['message' => 'الإيميل موجود ويمكنك إنشاء كلمة سر جديدة الآن']);
     }
 
     // ================================
@@ -70,7 +75,7 @@ class UserController extends Controller
     public function resetPasswordDirect(Request $request)
     {
         $request->validate([
-            'email' => 'required|email|exists:users,email',
+            'email'    => 'required|email|exists:users,email',
             'password' => 'required|min:6'
         ]);
 
@@ -78,8 +83,6 @@ class UserController extends Controller
             'password' => bcrypt($request->password)
         ]);
 
-        return response()->json([
-            'message' => 'تم إنشاء كلمة سر جديدة بنجاح'
-        ]);
+        return response()->json(['message' => 'تم إنشاء كلمة سر جديدة بنجاح']);
     }
 }
