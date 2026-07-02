@@ -21,6 +21,8 @@ class User extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable; // مهم جداً لعمل createToken()
 
     protected $primaryKey = 'user_id';
+    public $incrementing = true;
+    protected $keyType = 'int';
 
     protected $fillable = [
         'name',
@@ -57,11 +59,11 @@ class User extends Authenticatable
     }
     public function governorate()
     {
-        return $this->belongsTo(Governorate::class,'governorate_id');
+        return $this->belongsTo(Governorate::class, 'governorate_id');
     }
 
     public function city()
     {
-        return $this->belongsTo(City::class,'city_id');
+        return $this->belongsTo(City::class, 'city_id');
     }
 }
