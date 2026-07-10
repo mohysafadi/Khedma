@@ -3,40 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Complaint extends Model
 {
-    protected $primaryKey = 'complaint_id';
+    protected $table = 'complaints';
 
-    public $timestamps = false;
+    protected $primaryKey = 'id';
 
     protected $fillable = [
-        'complainant_id',
-        'against_id',
-        'request_id',
-        'admin_id',
-        'description',
+        'user_id',
+        'message',
         'status',
-        'response',
     ];
 
-    public function complainant()
+    public function user()
     {
-        return $this->belongsTo(User::class, 'complainant_id');
-    }
-
-    public function against()
-    {
-        return $this->belongsTo(User::class, 'against_id');
-    }
-
-    public function request()
-    {
-        return $this->belongsTo(ServiceRequest::class, 'request_id');
-    }
-
-    public function admin()
-    {
-        return $this->belongsTo(Admin::class, 'admin_id');
+        return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 }

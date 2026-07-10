@@ -6,24 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class RequestChat extends Model
 {
-    protected $primaryKey = 'message_id';
-
-    public $timestamps = false;
+    protected $primaryKey = 'chat_id';
+    public $incrementing = true;
+    protected $keyType = 'int';
 
     protected $fillable = [
         'request_id',
-        'sender_id',
-        'message',
-        'sent_at',
+        'customer_id',
+        'professional_id',
     ];
 
-    public function sender()
+    public function messages()
     {
-        return $this->belongsTo(User::class, 'sender_id');
-    }
-
-    public function request()
-    {
-        return $this->belongsTo(ServiceRequest::class, 'request_id');
+        return $this->hasMany(ChatMessage::class, 'chat_id');
     }
 }

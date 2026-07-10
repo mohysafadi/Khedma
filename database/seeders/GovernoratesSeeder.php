@@ -10,6 +10,7 @@ class GovernoratesSeeder extends Seeder
 {
     public function run()
     {
+        DB::table('governorates')->delete();
         DB::table('governorates')->insert([
             ['governorate_id' => 1, 'name' => 'دمشق'],
             ['governorate_id' => 2, 'name' => 'ريف دمشق'],

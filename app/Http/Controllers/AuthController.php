@@ -5,36 +5,39 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Hash;
+
+
 class AuthController extends Controller
 {
     //  الخطوة الأولى
-   public function register(Request $request)
-{
-    $data = $request->validate([
-        'name'     => 'required|string|max:255',
-        'email'    => 'required|email|unique:users,email',
-        'password' => 'required|min:6'
-    ]);
+    public function register(Request $request)
+    {
+        $data = $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|min:6'
+        ]);
 
-    // إنشاء المستخدم
-    $user = User::create([
-        'name'     => $data['name'],
-        'email'    => $data['email'],
-        'password' => bcrypt($data['password']),
-        'role'     => null
-    ]);
+        // إنشاء المستخدم
+        $user = User::create([
+            'name'     => $data['name'],
+            'email'    => $data['email'],
+            'password' => bcrypt($data['password']),
+            'role'     => null
+        ]);
 
-    // إنشاء التوكن مباشرة بعد التسجيل
-    $token = $user->createToken('auth_token')->plainTextToken;
+        // إنشاء التوكن مباشرة بعد التسجيل
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-    return response()->json([
-        'message' => 'تم إنشاء الحساب بنجاح - الخطوة 1',
-        'step'    => 1,
-        'token'   => $token,
-        'user'    => $user,
-        'input'   => $data
-    ]);
-}
+        return response()->json([
+            'message' => 'تم إنشاء الحساب بنجاح - الخطوة 1',
+            'step'    => 1,
+            'token'   => $token,
+            'user'    => $user,
+            'input'   => $data
+        ]);
+    }
     //  الخطوة الثانية
     public function completeBasicInfo(Request $request)
     {
@@ -47,29 +50,43 @@ class AuthController extends Controller
         ]);
 
         $user = User::findOrFail($data['user_id']);
+
+        // تحديث بيانات المستخدم الأساسية
         $user->update([
             'role'  => $data['role'],
             'phone' => $data['phone']
         ]);
 
         if ($data['role'] === 'customer') {
+
+            // إنشاء سجل الزبون
             $customer = $user->customer()->create([
                 'governorate_id' => $data['governorate_id'],
                 'city_id'        => $data['city_id']
             ]);
+
+            $professional = null;
         } else {
-            $customer = null;
+
+            // إنشاء سجل المهني
             $professional = $user->professional()->create([
                 'governorate_id' => $data['governorate_id']
             ]);
+
+            // إنشاء محفظة جديدة للمهني مع رصيد ابتدائي 100 ليرة سورية
+            $professional->wallet()->create([
+                'balance' => 100
+            ]);
+
+            $customer = null;
         }
 
         return response()->json([
             'message'      => 'تم إدخال المعلومات الأساسية - الخطوة 2',
             'step'         => 2,
             'user'         => $user,
-            'customer'     => $customer ?? null,
-            'professional' => $professional ?? null,
+            'customer'     => $customer,
+            'professional' => $professional,
             'input'        => $data
         ]);
     }
@@ -108,6 +125,32 @@ class AuthController extends Controller
             'user'         => $user->fresh()->load('professional'),
             'professional' => $user->professional,
             'input'        => $data
+        ]);
+    }
+    public function login(Request $request)
+    {
+        $data = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        // جلب المستخدم حسب الإيميل
+        $user = User::where('email', $data['email'])->first();
+
+        // التحقق من وجود المستخدم وصحة كلمة المرور
+        if (!$user || !Hash::check($data['password'], $user->password)) {
+            return response()->json([
+                'message' => 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
+            ], 401);
+        }
+
+        // إنشاء توكن جديد
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return response()->json([
+            'message' => 'تم تسجيل الدخول بنجاح',
+            'token' => $token,
+            'user' => $user
         ]);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\WalletTransaction;
+use Carbon\Carbon;
 
 class WalletController extends Controller
 {
@@ -39,7 +40,7 @@ class WalletController extends Controller
             ->get()
             ->map(function ($t) {
                 return [
-                    'date'   => $t->created_at->format('Y-m-d'),
+                    'date'   => Carbon::parse($t->created_at)->format('Y-m-d'),
                     'type'   => $t->type,
                     'amount' => $t->amount,
                 ];

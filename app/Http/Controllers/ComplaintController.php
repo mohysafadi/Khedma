@@ -7,59 +7,45 @@ use Illuminate\Http\Request;
 
 class ComplaintController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // إرسال شكوى من المستخدم
+    public function submit(Request $request)
+    {
+        $data = $request->validate([
+            'message' => 'required|string',
+        ]);
+
+        Complaint::create([
+            'user_id' => $request->user()->id,   // إذا عندك user_id بدل id خبرني
+            'message' => $data['message'],
+            'status' => 'pending',
+        ]);
+
+        return response()->json(['message' => 'تم إرسال الشكوى بنجاح']);
+    }
+
+    // جلب الشكاوي للأدمن
     public function index()
     {
-        //
+        $complaints = Complaint::with('user')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'complaints' => $complaints
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // تغيير حالة الشكوى
+    public function updateStatus(Request $request, $id)
     {
-        //
-    }
+        $data = $request->validate([
+            'status' => 'required|string', // pending, in_review, resolved
+        ]);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $complaint = Complaint::findOrFail($id);
+        $complaint->status = $data['status'];
+        $complaint->save();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Complaint $complaint)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Complaint $complaint)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Complaint $complaint)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Complaint $complaint)
-    {
-        //
+        return response()->json(['message' => 'تم تحديث حالة الشكوى']);
     }
 }

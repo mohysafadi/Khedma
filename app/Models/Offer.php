@@ -12,7 +12,8 @@ class Offer extends Model
         'professional_id',
         'request_id',
         'description',
-        'delivery_time',
+        'duration',
+        'price',
         'status',
         'reason',
     ];

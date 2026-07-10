@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             ServiceCategoriesSeeder::class,
             GovernoratesSeeder::class,
             CitiesSeeder::class,
+            AdminSeeder::class,
         ]);
     }
 }

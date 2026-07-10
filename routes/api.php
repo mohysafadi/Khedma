@@ -12,7 +12,8 @@ use App\Http\Controllers\ServiceCategoryController;
 use App\Http\Controllers\ServiceRequestController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\WalletController;
-
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\ComplaintController;
 /*
 |--------------------------------------------------------------------------
 | 1) التصنيفات والخدمات
@@ -128,7 +129,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // رفض عرض
     Route::post('/service-requests/{request_id}/offers/{offer_id}/reject', [OfferController::class, 'reject']);
     //جلب العروض الخاصة بالمهني
-    
+
     Route::get('/professional/offers', [OfferController::class, 'professionalOffers']);
 
     /*
@@ -143,6 +144,22 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/wallet/transactions', [WalletController::class, 'transactions']);
 
 
+    Route::middleware('auth:sanctum')->group(function () {
+
+        Route::get('/chats', [ChatController::class, 'getChats']);
+        Route::get('/chats/{chat_id}/messages', [ChatController::class, 'getChatMessages']);
+        Route::post('/chats/{chat_id}/messages/send', [ChatController::class, 'sendMessage']);
+    });
+
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/complaints', [ComplaintController::class, 'submit']);
+    });
+
+    Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+        Route::get('/admin/complaints', [ComplaintController::class, 'index']);
+        Route::put('/admin/complaints/{id}', [ComplaintController::class, 'updateStatus']);
+    });
     /*
     |--------------------------------------------------------------------------
     | 10) بيانات المستخدم الحالي

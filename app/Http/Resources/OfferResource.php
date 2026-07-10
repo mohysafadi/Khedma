@@ -9,26 +9,27 @@ class OfferResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'offer_id' => $this->offer_id,
-            'price' => $this->price,
-            'details' => $this->details,
-            'eta' => $this->eta,
-            'status' => $this->status,
+            'offer_id'        => $this->offer_id,
+            'description'     => $this->description,
+            'duration'        => $this->duration,
+            'price'           => $this->price,
+            'status'          => $this->status,
+            'created_at'      => $this->created_at->format('Y-m-d H:i'),
 
+            // معلومات المهني
             'professional' => [
-                'id' => $this->professional->professional_id,
-                'name' => $this->professional->user->name,
-                'rating' => $this->professional->rating,
+                'professional_id' => $this->professional->professional_id,
+                'name'            => $this->professional->user->name,
+                'category'        => $this->professional->category->name,
+                'governorate'     => $this->professional->governorate->name,
             ],
 
+            // معلومات الطلب
             'request' => [
-                'id' => $this->request->request_id,
-                'description' => $this->request->description,
-                'photo_url' => $this->request->photo ? asset('storage/'.$this->request->photo) : null,
-                'category' => [
-                    'id' => $this->request->category->category_id,
-                    'name' => $this->request->category->name,
-                ]
+                'request_id'   => $this->request->request_id,
+                'category'     => $this->request->category->name,
+                'description'  => $this->request->description,
+                'customer_name' => $this->request->customer->user->name,
             ]
         ];
     }

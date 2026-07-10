@@ -14,7 +14,7 @@ use App\Models\Customer;
 use App\Models\Professional;
 use App\Models\Admin;
 use App\Models\Notification;
-use App\Models\RequestChat;
+use App\Models\ChatMessage;
 
 class User extends Authenticatable
 {
@@ -55,7 +55,7 @@ class User extends Authenticatable
 
     public function sentMessages(): HasMany
     {
-        return $this->hasMany(RequestChat::class, 'sender_id');
+        return $this->hasMany(ChatMessage::class, 'sender_id');
     }
     public function governorate()
     {

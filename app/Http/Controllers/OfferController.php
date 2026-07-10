@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Offer;
 use App\Models\ServiceRequest;
 use App\Http\Resources\OfferResource;
+use App\Models\WalletTransaction;
 
 class OfferController extends Controller
 {
@@ -26,7 +27,6 @@ class OfferController extends Controller
 
         $sr = ServiceRequest::findOrFail($request_id);
 
-        // التحقق أن الطلب بنفس محافظة وتصنيف المهني
         if (
             $sr->category_id != $professional->category_id ||
             $sr->customer->governorate_id != $professional->governorate_id
@@ -34,16 +34,20 @@ class OfferController extends Controller
             return response()->json(['message' => 'غير مسموح لك بتقديم عرض على هذا الطلب'], 403);
         }
 
+        // ✔ التحقق من الحقول الصحيحة
         $data = $request->validate([
-            'description'   => 'required|string',
-            'delivery_time' => 'required|string'
+            'description' => 'required|string',
+            'duration'    => 'required|string',
+            'price'       => 'required|numeric'
         ]);
 
+        // ✔ إنشاء العرض بالحقول الصحيحة
         $offer = Offer::create([
             'professional_id' => $professional->professional_id,
             'request_id'      => $sr->request_id,
             'description'     => $data['description'],
-            'delivery_time'   => $data['delivery_time'],
+            'duration'        => $data['duration'],
+            'price'           => $data['price'],
             'status'          => 'pending'
         ]);
 
@@ -90,15 +94,30 @@ class OfferController extends Controller
         $sr   = ServiceRequest::findOrFail($request_id);
         $user = $request->user();
 
+        // التحقق أن الزبون هو صاحب الطلب
         if ($sr->customer_id !== optional($user->customer)->customer_id) {
             return response()->json(['message' => 'غير مصرح'], 403);
         }
 
+        // جلب العرض المطلوب
         $offer = Offer::where('offer_id', $offer_id)
             ->where('request_id', $request_id)
             ->firstOrFail();
 
+        // ================================
+        // 🔥 منع قبول العرض إذا رصيد المهني أقل من 100
+        // ================================
+        $professional = $offer->professional;
+        $wallet = $professional->wallet;
+
+        if (!$wallet || $wallet->balance < 100) {
+            return response()->json([
+                'message' => 'لا يمكن قبول العرض — رصيد المهني أقل من 100 ليرة سورية'
+            ], 403);
+        }
+
         DB::transaction(function () use ($request_id, $offer, $sr) {
+
             // رفض باقي العروض
             Offer::where('request_id', $request_id)
                 ->where('offer_id', '!=', $offer->offer_id)
@@ -111,14 +130,42 @@ class OfferController extends Controller
             // تحديث حالة الطلب
             $sr->status = 'accepted';
             $sr->save();
+
+            // ================================
+            // 🔥 خصم العمولة من محفظة المهني
+            // ================================
+            $professional = $offer->professional;
+            $wallet = $professional->wallet;
+
+            if ($wallet) {
+                $wallet->balance -= 100;
+                $wallet->save();
+
+                WalletTransaction::create([
+                    'wallet_id' => $wallet->wallet_id,
+                    'type'      => 'withdrawal',
+                    'amount'    => 100,
+                    'note'      => 'خصم عمولة قبول العرض'
+                ]);
+            }
+
+            // ================================
+            // 🔥 إنشاء محادثة بين الزبون والمهني
+            // ================================
+            DB::table('request_chats')->insert([
+                'request_id'      => $sr->request_id,
+                'customer_id'     => $sr->customer_id,
+                'professional_id' => $offer->professional_id,
+                'created_at'      => now(),
+                'updated_at'      => now()
+            ]);
         });
 
         return response()->json([
-            'message' => 'تم قبول العرض',
+            'message' => 'تم قبول العرض وتم خصم العمولة',
             'offer'   => new OfferResource($offer->fresh())
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -168,7 +215,7 @@ class OfferController extends Controller
                     'customer'    => $offer->request->customer->user->name,
                     'location'    => $offer->request->customer->governorate->name . "، " . $offer->request->customer->city->name,
                     'offer_body'  => $offer->description,
-                    'delivery_time' => $offer->delivery_time,
+                    'duration' => $offer->duration,
                     'category'    => $offer->request->category->name
                 ];
             });
