@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Customer;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Hash;
-
 
 class AuthController extends Controller
 {
-    //  الخطوة الأولى
+    // الخطوة الأولى: تسجيل المستخدم
     public function register(Request $request)
     {
         $data = $request->validate([
@@ -19,7 +18,6 @@ class AuthController extends Controller
             'password' => 'required|min:6'
         ]);
 
-        // إنشاء المستخدم
         $user = User::create([
             'name'     => $data['name'],
             'email'    => $data['email'],
@@ -27,7 +25,6 @@ class AuthController extends Controller
             'role'     => null
         ]);
 
-        // إنشاء التوكن مباشرة بعد التسجيل
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -38,7 +35,8 @@ class AuthController extends Controller
             'input'   => $data
         ]);
     }
-    //  الخطوة الثانية
+
+    // الخطوة الثانية: إدخال المعلومات الأساسية
     public function completeBasicInfo(Request $request)
     {
         $data = $request->validate([
@@ -51,7 +49,7 @@ class AuthController extends Controller
 
         $user = User::findOrFail($data['user_id']);
 
-        // تحديث بيانات المستخدم الأساسية
+        // تحديث بيانات المستخدم
         $user->update([
             'role'  => $data['role'],
             'phone' => $data['phone']
@@ -59,24 +57,29 @@ class AuthController extends Controller
 
         if ($data['role'] === 'customer') {
 
-            // إنشاء سجل الزبون
-            $customer = $user->customer()->create([
-                'governorate_id' => $data['governorate_id'],
-                'city_id'        => $data['city_id']
-            ]);
+            // 🔥 الحل النهائي: إنشاء سجل زبون بشكل مضمون
+            $customer = Customer::updateOrCreate(
+                ['user_id' => $user->user_id],
+                [
+                    'governorate_id' => $data['governorate_id'],
+                    'city_id'        => $data['city_id']
+                ]
+            );
 
             $professional = null;
         } else {
 
             // إنشاء سجل المهني
-            $professional = $user->professional()->create([
-                'governorate_id' => $data['governorate_id']
-            ]);
+            $professional = $user->professional()->updateOrCreate(
+                ['user_id' => $user->user_id],
+                ['governorate_id' => $data['governorate_id']]
+            );
 
-            // إنشاء محفظة جديدة للمهني مع رصيد ابتدائي 100 ليرة سورية
-            $professional->wallet()->create([
-                'balance' => 100
-            ]);
+            // إنشاء محفظة للمهني
+            $professional->wallet()->updateOrCreate(
+                ['professional_id' => $professional->professional_id],
+                ['balance' => 100]
+            );
 
             $customer = null;
         }
@@ -90,8 +93,8 @@ class AuthController extends Controller
             'input'        => $data
         ]);
     }
-    //  الخطوة الثالثة
 
+    // الخطوة الثالثة: معلومات المهني
     public function completeProfessionalInfo(Request $request)
     {
         $data = $request->validate([
@@ -127,6 +130,8 @@ class AuthController extends Controller
             'input'        => $data
         ]);
     }
+
+    // تسجيل الدخول
     public function login(Request $request)
     {
         $data = $request->validate([
@@ -134,17 +139,14 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        // جلب المستخدم حسب الإيميل
         $user = User::where('email', $data['email'])->first();
 
-        // التحقق من وجود المستخدم وصحة كلمة المرور
         if (!$user || !Hash::check($data['password'], $user->password)) {
             return response()->json([
                 'message' => 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
             ], 401);
         }
 
-        // إنشاء توكن جديد
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([

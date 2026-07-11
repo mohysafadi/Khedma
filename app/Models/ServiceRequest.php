@@ -6,7 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class ServiceRequest extends Model
 {
+    protected $table = 'service_requests';
+
     protected $primaryKey = 'request_id';
+    public $incrementing = true;
+    protected $keyType = 'int';
+
+    protected $casts = [
+        'request_id' => 'integer',
+        'customer_id' => 'integer',
+        'category_id' => 'integer',
+    ];
 
     protected $fillable = [
         'customer_id',
@@ -41,4 +51,12 @@ class ServiceRequest extends Model
     {
         return $this->hasOne(Review::class, 'request_id');
     }
+    public function professional()
+    {
+        return $this->belongsTo(Professional::class, 'professional_id');
+    }
+    public function acceptedOffer()
+{
+    return $this->hasOne(Offer::class, 'request_id')->where('status', 'accepted');
+}
 }

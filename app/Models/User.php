@@ -8,11 +8,12 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use App\Models\Ban;
+use App\Models\Restriction;
 // Import models
 use App\Models\Customer;
 use App\Models\Professional;
-use App\Models\Admin;
+
 use App\Models\Notification;
 use App\Models\ChatMessage;
 
@@ -24,6 +25,10 @@ class User extends Authenticatable
     public $incrementing = true;
     protected $keyType = 'int';
 
+    public function getAuthIdentifierName()
+    {
+        return 'user_id';
+    }
     protected $fillable = [
         'name',
         'email',
@@ -43,10 +48,7 @@ class User extends Authenticatable
         return $this->hasOne(Professional::class, 'user_id');
     }
 
-    public function admin(): HasOne
-    {
-        return $this->hasOne(Admin::class, 'user_id');
-    }
+
 
     public function notifications(): HasMany
     {
@@ -65,5 +67,14 @@ class User extends Authenticatable
     public function city()
     {
         return $this->belongsTo(City::class, 'city_id');
+    }
+    public function bans()
+    {
+        return $this->hasMany(Ban::class, 'user_id');
+    }
+
+    public function restrictions()
+    {
+        return $this->hasMany(Restriction::class, 'user_id');
     }
 }

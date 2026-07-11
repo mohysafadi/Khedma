@@ -152,9 +152,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
 
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/complaints', [ComplaintController::class, 'submit']);
-    });
+
+    Route::middleware('auth:sanctum')->post('/complaints', [ComplaintController::class, 'submit']);
 
     Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::get('/admin/complaints', [ComplaintController::class, 'index']);
