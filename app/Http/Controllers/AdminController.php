@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Models\Complaint;
 use App\Models\ServiceRequest;
 use App\Models\Professional;
-use App\Models\Restriction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\WalletTransaction;
@@ -33,7 +32,6 @@ class AdminController extends Controller
             return back()->withErrors(['error' => 'بيانات تسجيل الدخول غير صحيحة أو المستخدم ليس أدمن']);
         }
 
-        // تخزين الآدمن في السيشن
         session(['admin_id' => $user->user_id]);
 
         return redirect('/admin/dashboard');

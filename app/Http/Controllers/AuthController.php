@@ -57,7 +57,6 @@ class AuthController extends Controller
 
         if ($data['role'] === 'customer') {
 
-            // 🔥 الحل النهائي: إنشاء سجل زبون بشكل مضمون
             $customer = Customer::updateOrCreate(
                 ['user_id' => $user->user_id],
                 [
