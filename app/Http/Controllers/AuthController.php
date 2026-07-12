@@ -139,6 +139,7 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
+        // جلب المستخدم
         $user = User::where('email', $data['email'])->first();
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
@@ -147,6 +148,21 @@ class AuthController extends Controller
             ], 401);
         }
 
+        // التحقق من وجود حظر فعال
+        $activeBan = $user->bans()
+            ->where(function ($q) {
+                $q->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            })
+            ->first();
+
+        if ($activeBan) {
+            return response()->json([
+                'message' => 'تم حظر حسابك ولا يمكنك تسجيل الدخول'
+            ], 403);
+        }
+
+        // إنشاء توكن جديد
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([

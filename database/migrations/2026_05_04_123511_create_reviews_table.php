@@ -15,21 +15,19 @@ return new class extends Migration
             $table->id('review_id');
 
             $table->foreignId('customer_id')
-                  ->constrained('customers', 'customer_id')
-                  ->cascadeOnDelete();
+                ->constrained('customers', 'customer_id')
+                ->cascadeOnDelete();
 
             $table->foreignId('professional_id')
-                  ->constrained('professionals', 'professional_id')
-                  ->cascadeOnDelete();
+                ->constrained('professionals', 'professional_id')
+                ->cascadeOnDelete();
 
             $table->foreignId('request_id')
-                  ->constrained('service_requests', 'request_id')
-                  ->cascadeOnDelete();
+                ->constrained('service_requests', 'request_id')
+                ->cascadeOnDelete();
 
-            $table->integer('rating'); 
-            $table->text('comment')->nullable();
-
-            $table->timestamp('created_at')->useCurrent();
+            $table->unsignedTinyInteger('rating'); // من 1 إلى 10
+            $table->timestamps();
         });
     }
 

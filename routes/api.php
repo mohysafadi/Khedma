@@ -14,6 +14,8 @@ use App\Http\Controllers\OfferController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ComplaintController;
+use App\Http\Controllers\ReviewController;
+
 /*
 |--------------------------------------------------------------------------
 | 1) التصنيفات والخدمات
@@ -158,6 +160,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::get('/admin/complaints', [ComplaintController::class, 'index']);
         Route::put('/admin/complaints/{id}', [ComplaintController::class, 'updateStatus']);
+    });
+    Route::middleware('auth:sanctum')->group(function () {
+
+        Route::post('/reviews', [ReviewController::class, 'store']);
+
+        Route::get('/reviews/average/{professional_id}', [ReviewController::class, 'average']);
     });
     /*
     |--------------------------------------------------------------------------

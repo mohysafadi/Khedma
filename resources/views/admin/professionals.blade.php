@@ -7,7 +7,7 @@
         <h3>قائمة المهنيين</h3>
     </div>
 
-    <div class="card-body">
+    <div class="card-body"style="background-color: rgba(255,255,255,0.1); backdrop-filter: blur(4px);">
 
         <table class="table table-bordered table-striped mt-3">
             <thead class="table-dark">

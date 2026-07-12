@@ -73,8 +73,5 @@ class User extends Authenticatable
         return $this->hasMany(Ban::class, 'user_id');
     }
 
-    public function restrictions()
-    {
-        return $this->hasMany(Restriction::class, 'user_id');
-    }
+    
 }

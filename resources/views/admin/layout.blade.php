@@ -9,10 +9,10 @@
 
     <style>
         body {
-            direction: rtl;
-            background-color: #f4faff;
-            /* أزرق سماوي فاتح */
-            font-family: 'Tahoma', sans-serif;
+            background-image: url('/images/m.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
 
         .sidebar {
@@ -46,6 +46,14 @@
         .content {
             margin-right: 270px;
             padding: 20px;
+
+            /* خلفية شفافة */
+            background-color: rgba(255, 255, 255, 0.45);
+
+            /* تأثير زجاجي احترافي */
+
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         .card {
@@ -95,6 +103,7 @@
         <a href="/admin/wallet/charge">شحن رصيد مهني</a>
         <a href="/admin/complaints">الشكاوي</a>
         <a href="/admin/users">المستخدمين</a>
+        <a href="/admin/banned-users">المستخدمون المحظورون</a>
         <a href="/admin/professionals">المهنيين</a>
         <a href="/admin/service-requests">الطلبات</a>
         <a href="/logout" class="text-danger">تسجيل خروج</a>

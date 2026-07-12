@@ -15,7 +15,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'check.ban' => \App\Http\Middleware\CheckUserBan::class,
-            'check.restriction' => \App\Http\Middleware\CheckUserRestriction::class,
         ]);
         
     })

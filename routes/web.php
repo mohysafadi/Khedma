@@ -27,8 +27,9 @@ Route::get('/admin/users/{id}', [AdminController::class, 'userDetails']);
 Route::get('/admin/service-requests', [AdminController::class, 'requests']);
 Route::get('/admin/service-requests/{id}', [AdminController::class, 'requestDetails']);
 Route::post('/admin/users/ban', [AdminController::class, 'banUser']);
-Route::post('/admin/users/restrict', [AdminController::class, 'restrictUser']);
+Route::get('/admin/banned-users', [AdminController::class, 'bannedUsers']);
 
+Route::post('/admin/users/unban', [AdminController::class, 'unbanUser']);
 Route::get('/admin/wallet/charge', function () {
     return view('admin.wallet_charge');
 });

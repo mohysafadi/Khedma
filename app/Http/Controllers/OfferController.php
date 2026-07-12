@@ -104,19 +104,20 @@ class OfferController extends Controller
             ->where('request_id', $request_id)
             ->firstOrFail();
 
-        // ================================
-        // 🔥 منع قبول العرض إذا رصيد المهني أقل من 100
-        // ================================
+        // جلب المهني
         $professional = $offer->professional;
+
+        // جلب محفظة المهني
         $wallet = $professional->wallet;
 
+        // منع قبول العرض إذا رصيد المهني أقل من 100
         if (!$wallet || $wallet->balance < 100) {
             return response()->json([
                 'message' => 'لا يمكن قبول العرض — رصيد المهني أقل من 100 ليرة سورية'
             ], 403);
         }
 
-        DB::transaction(function () use ($request_id, $offer, $sr) {
+        DB::transaction(function () use ($request_id, $offer, $sr, $professional, $wallet) {
 
             // رفض باقي العروض
             Offer::where('request_id', $request_id)
@@ -127,35 +128,27 @@ class OfferController extends Controller
             $offer->status = 'accepted';
             $offer->save();
 
-            // تحديث حالة الطلب
+            // تحديث حالة الطلب + ربط الطلب بالمهني 
             $sr->status = 'accepted';
+            $sr->professional_id = $professional->professional_id;   // أهم سطر
             $sr->save();
 
-            // ================================
-            // 🔥 خصم العمولة من محفظة المهني
-            // ================================
-            $professional = $offer->professional;
-            $wallet = $professional->wallet;
+            // خصم العمولة من محفظة المهني
+            $wallet->balance -= 100;
+            $wallet->save();
 
-            if ($wallet) {
-                $wallet->balance -= 100;
-                $wallet->save();
+            WalletTransaction::create([
+                'wallet_id' => $wallet->wallet_id,
+                'type'      => 'withdrawal',
+                'amount'    => 100,
+                'note'      => 'خصم عمولة قبول العرض'
+            ]);
 
-                WalletTransaction::create([
-                    'wallet_id' => $wallet->wallet_id,
-                    'type'      => 'withdrawal',
-                    'amount'    => 100,
-                    'note'      => 'خصم عمولة قبول العرض'
-                ]);
-            }
-
-            // ================================
-            // 🔥 إنشاء محادثة بين الزبون والمهني
-            // ================================
+            // إنشاء محادثة بين الزبون والمهني
             DB::table('request_chats')->insert([
                 'request_id'      => $sr->request_id,
                 'customer_id'     => $sr->customer_id,
-                'professional_id' => $offer->professional_id,
+                'professional_id' => $professional->professional_id,
                 'created_at'      => now(),
                 'updated_at'      => now()
             ]);

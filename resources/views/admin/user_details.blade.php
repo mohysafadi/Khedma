@@ -18,7 +18,7 @@
 
         <a href="/admin/users" class="btn btn-secondary">رجوع لقائمة المستخدمين</a>
         <a href="/admin/users/{{ $user->user_id }}/actions" class="btn btn-danger mt-3">
-            إدارة الحظر والتقييد
+            إدارة الحظر 
         </a>
     </div>
 </div>

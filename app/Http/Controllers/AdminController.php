@@ -95,18 +95,7 @@ class AdminController extends Controller
         return back()->with('success', 'تم حظر المستخدم بنجاح');
     }
 
-    public function restrictUser(Request $request)
-    {
-        $data = $request->validate([
-            'user_id' => 'required|exists:users,user_id',
-            'type' => 'required|string',
-            'expires_at' => 'nullable|date'
-        ]);
 
-        Restriction::create($data);
-
-        return back()->with('success', 'تم تقييد المستخدم بنجاح');
-    }
 
     public function chargeWallet(Request $request)
     {
@@ -148,5 +137,21 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', 'تم شحن الرصيد بنجاح');
+    }
+    public function bannedUsers()
+    {
+        $bans = \App\Models\Ban::with('user')->get();
+
+        return view('admin.banned_users', compact('bans'));
+    }
+    public function unbanUser(Request $request)
+    {
+        $ban = \App\Models\Ban::find($request->ban_id);
+
+        if ($ban) {
+            $ban->delete();
+        }
+
+        return back()->with('success', 'تم رفع الحظر عن المستخدم');
     }
 }
