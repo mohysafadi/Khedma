@@ -23,16 +23,7 @@
             <li class="list-group-item"><strong>رقم المهني:</strong> {{ $professional->professional_id }}</li>
             <li class="list-group-item"><strong>سنوات الخبرة:</strong> {{ $professional->experience_years }}</li>
             <li class="list-group-item"><strong>النبذة (Bio):</strong> {{ $professional->bio ?? 'لا يوجد' }}</li>
-            <li class="list-group-item"><strong>الحالة:</strong> 
-                <span class="badge 
-                    @if($professional->professional_status == 'pending') bg-warning text-dark
-                    @elseif($professional->professional_status == 'approved') bg-success
-                    @elseif($professional->professional_status == 'rejected') bg-danger
-                    @endif
-                ">
-                    {{ $professional->professional_status }}
-                </span>
-            </li>
+           
             <li class="list-group-item"><strong>التصنيف:</strong> {{ $professional->rating ?? 'غير متوفر' }}</li>
         </ul>
 

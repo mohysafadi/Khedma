@@ -18,7 +18,7 @@ use App\Models\ChatMessage;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable; // مهم جداً لعمل createToken()
+    use HasApiTokens, HasFactory, Notifiable; 
 
     protected $primaryKey = 'user_id';
     public $incrementing = true;
@@ -49,10 +49,7 @@ class User extends Authenticatable
 
 
 
-    public function notifications(): HasMany
-    {
-        return $this->hasMany(Notification::class, 'user_id');
-    }
+    
 
     public function sentMessages(): HasMany
     {

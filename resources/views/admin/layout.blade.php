@@ -25,7 +25,7 @@
             top: 0;
             right: 0;
             padding: 20px;
-            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: -2px 0 10px rgba(0, 179, 202, 0.1);
         }
 
         .sidebar a {
@@ -53,7 +53,7 @@
             /* تأثير زجاجي احترافي */
 
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 20px rgba(11, 203, 236, 0.1);
         }
 
         .card {

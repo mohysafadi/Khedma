@@ -14,6 +14,7 @@ class ReviewController extends Controller
         $data = $request->validate([
             'request_id' => 'required|exists:service_requests,request_id',
             'rating'     => 'required|integer|min:1|max:10',
+            
         ]);
 
         // المستخدم من جدول users

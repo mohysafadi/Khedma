@@ -39,7 +39,7 @@ class ComplaintController extends Controller
             'status'      => 'pending',
         ]);
 
-        // الرد الجديد
+      
         return response()->json([
             'message'       => 'تم إرسال الشكوى بنجاح',
             'request_id'    => $complaint->request_id,
@@ -48,7 +48,6 @@ class ComplaintController extends Controller
         ]);
     }
 
-    // جلب الشكاوي للأدمن
     public function index()
     {
         $complaints = Complaint::with(['user', 'customer', 'request'])

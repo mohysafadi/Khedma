@@ -17,7 +17,7 @@ return new class extends Migration
     $table->foreignId('category_id')->nullable()->constrained('service_categories', 'category_id')->nullOnDelete();
     $table->string('bio')->nullable();
     $table->integer('experience_years')->default(0);
-    $table->string('tool_image')->nullable(); // صورة العدة
+    $table->string('tool_image')->nullable(); // صورة الهوية
     $table->string('governorate_id')->nullable();
     $table->string('professional_status')->default('pending');
     $table->timestamps();

@@ -7,9 +7,7 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    // ================================
-    // 1) عرض البروفايل
-    // ================================
+   //عرض البروفاييل
     public function profile(Request $request)
     {
         $user = $request->user()->load(
@@ -51,9 +49,7 @@ class UserController extends Controller
         return response()->json($profile);
     }
 
-    // ================================
-    // 2) التحقق من وجود الإيميل
-    // ================================
+    // التحقق من وجود الايميل
     public function checkEmail(Request $request)
     {
         $request->validate([
@@ -69,9 +65,7 @@ class UserController extends Controller
         return response()->json(['message' => 'الإيميل موجود ويمكنك إنشاء كلمة سر جديدة الآن']);
     }
 
-    // ================================
-    // 3) إنشاء كلمة سر جديدة بدون الحاجة للقديمة
-    // ================================
+    //  إنشاء كلمة سر جديدة بدون الحاجة للقديمة
     public function resetPasswordDirect(Request $request)
     {
         $request->validate([

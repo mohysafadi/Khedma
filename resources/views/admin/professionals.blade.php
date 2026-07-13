@@ -17,7 +17,6 @@
                     <th>البريد الإلكتروني</th>
                     <th>رقم الهاتف</th>
                     <th>سنوات الخبرة</th>
-                    <th>الحالة</th>
                     <th>النبذة</th>
                     <th>تفاصيل</th>
                 </tr>
@@ -34,16 +33,6 @@
 
                     <td>{{ $pro->experience_years }}</td>
 
-                    <td>
-                        <span class="badge 
-                            @if($pro->professional_status == 'pending') bg-warning text-dark
-                            @elseif($pro->professional_status == 'approved') bg-success
-                            @elseif($pro->professional_status == 'rejected') bg-danger
-                            @endif
-                        ">
-                            {{ $pro->professional_status }}
-                        </span>
-                    </td>
 
                     <td>{{ $pro->bio ?? 'لا يوجد' }}</td>
 

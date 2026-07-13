@@ -9,12 +9,7 @@ use App\Http\Resources\ServiceRequestDetailsResource;
 
 class ServiceRequestController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | 1) إنشاء طلب جديد (Store)
-    |--------------------------------------------------------------------------
-    | يستخدمه الزبون لإرسال طلب خدمة جديد.
-    */
+   //انشاء طلب جديد
     public function store(Request $request)
     {
         $customer = $request->user()->customer;
@@ -49,13 +44,7 @@ class ServiceRequestController extends Controller
         ]);
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | 2) جلب طلبات الزبون (Index)
-    |--------------------------------------------------------------------------
-    | يستخدمه الزبون لعرض كل الطلبات الخاصة فيه.
-    */
+//جلب طلبات الزبون 
     public function index(Request $request)
     {
         $customer = $request->user()->customer;
@@ -72,12 +61,7 @@ class ServiceRequestController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | 3) تفاصيل طلب معيّن (Show)
-    |--------------------------------------------------------------------------
-    | يستخدمه الزبون لعرض تفاصيل طلبه.
-    */
+    //تفاصيل طلب واحد
     public function show($id, Request $request)
     {
         $sr = ServiceRequest::with(['category', 'offers.professional.user'])
@@ -91,12 +75,7 @@ class ServiceRequestController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | 4) تفاصيل طلب للمهني (Professional Show)
-    |--------------------------------------------------------------------------
-    | يستخدمه المهني لعرض تفاصيل طلب متاح ضمن محافظته وتصنيفه.
-    */
+    //تفاصيل طلب للمهني 
     public function professionalShow($id, Request $request)
     {
         $professional = $request->user()->professional;
@@ -126,13 +105,7 @@ class ServiceRequestController extends Controller
         ]);
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | 5) جلب الطلبات المتاحة للمهني (Professional Requests)
-    |--------------------------------------------------------------------------
-    | يستخدمه المهني لعرض قائمة الطلبات ضمن محافظته وتصنيفه.
-    */
+//جلب الطلبات المتاحة للمهني 
     public function professionalRequests(Request $request)
     {
         $professional = $request->user()->professional;

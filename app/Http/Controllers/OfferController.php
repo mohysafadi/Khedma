@@ -11,12 +11,7 @@ use App\Models\WalletTransaction;
 
 class OfferController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | 1) تقديم عرض جديد (Submit Offer)
-    |--------------------------------------------------------------------------
-    | يستخدمه المهني لإرسال عرض على طلب خدمة معيّن.
-    */
+    //تقديم عرض على طلب  
     public function store($request_id, Request $request)
     {
         $professional = $request->user()->professional;
@@ -41,7 +36,7 @@ class OfferController extends Controller
             'price'       => 'required|numeric'
         ]);
 
-        // ✔ إنشاء العرض بالحقول الصحيحة
+        //  إنشاء العرض 
         $offer = Offer::create([
             'professional_id' => $professional->professional_id,
             'request_id'      => $sr->request_id,
@@ -57,13 +52,7 @@ class OfferController extends Controller
         ]);
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | 2) جلب تفاصيل عرض واحد (Show Offer)
-    |--------------------------------------------------------------------------
-    | يستخدمه الزبون أو المهني لعرض تفاصيل عرض معيّن.
-    */
+    //جلب تفاصيل عرض
     public function show($offer_id, Request $request)
     {
         $offer = Offer::with(['professional.user', 'request.category'])
@@ -83,12 +72,7 @@ class OfferController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | 3) قبول العرض (Accept Offer)
-    |--------------------------------------------------------------------------
-    | يستخدمه الزبون لقبول عرض معيّن على طلبه.
-    */
+    //قبول عرض
     public function accept($request_id, $offer_id, Request $request)
     {
         $sr   = ServiceRequest::findOrFail($request_id);
@@ -160,12 +144,8 @@ class OfferController extends Controller
         ]);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | 4) رفض العرض (Reject Offer)
-    |--------------------------------------------------------------------------
-    | يستخدمه الزبون لرفض عرض معيّن على طلبه.
-    */
+    //رفض العرض
+    
     public function reject($request_id, $offer_id, Request $request)
     {
         $sr   = ServiceRequest::findOrFail($request_id);

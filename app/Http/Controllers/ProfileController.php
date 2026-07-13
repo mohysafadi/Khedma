@@ -6,9 +6,7 @@ use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
-    // ================================
-    // 1) تعديل البروفايل
-    // ================================
+    //  تعديل البروفايل
     public function updateProfile(Request $request)
     {
         $user = $request->user();
@@ -58,9 +56,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    // ================================
-    // 2) تغيير كلمة السر
-    // ================================
+    //  تغيير كلمة السر
     public function changePassword(Request $request)
     {
         $request->validate([

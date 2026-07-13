@@ -10,7 +10,11 @@ class ProfessionalController extends Controller
 
     public function getByCategory(Request $request)
     {
-        $categoryId = $request->category_id;
+        $categoryId = $request->category_id ?? $request->query('category_id');
+
+        if (!$categoryId) {
+            return response()->json(['message' => 'يجب إرسال category_id'], 400);
+        }
 
         $professionals = Professional::where('category_id', $categoryId)->get();
 

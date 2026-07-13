@@ -92,9 +92,9 @@ class ChatController extends Controller
         ]);
     }
 
-    /**
-     * إنشاء محادثة جديدة عند قبول الطلب
-     */
+    
+     // إنشاء محادثة جديدة عند قبول الطلب
+     
     public function createChatOnAccept($request_id, $customer_id, $professional_id)
     {
         $chat = RequestChat::create([
