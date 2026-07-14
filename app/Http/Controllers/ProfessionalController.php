@@ -16,9 +16,33 @@ class ProfessionalController extends Controller
             return response()->json(['message' => 'يجب إرسال category_id'], 400);
         }
 
-        $professionals = Professional::where('category_id', $categoryId)->get();
+        $professionals = Professional::where('category_id', $categoryId)->with('user')->get();
 
-        return response()->json($professionals);
+        $data = $professionals->map(function ($professional) {
+            // حساب متوسط التقييم
+            $average = \App\Models\Review::where('professional_id', $professional->professional_id)->avg('rating');
+            if ($average === null) {
+                $average = 5; // الديفولت إذا ما عندو تقييمات
+            }
+
+            return [
+                'professional_id'   => $professional->professional_id,
+                'user_id'           => $professional->user_id,
+                'name'             => $professional->user?->name,
+                'average_rating'   => round($average, 2),
+                'category_id'       => $professional->category_id,
+                'bio'               => $professional->bio,
+                'experience_years'  => $professional->experience_years,
+                'tool_image'        => $professional->tool_image,
+                'governorate_id'    => $professional->governorate_id,
+                'professional_status' => $professional->professional_status,
+                'created_at'        => $professional->created_at,
+                'updated_at'        => $professional->updated_at,
+
+            ];
+        });
+
+        return response()->json($data);
     }
     /**
      * Display a listing of the resource.
