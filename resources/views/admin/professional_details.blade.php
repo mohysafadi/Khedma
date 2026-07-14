@@ -24,7 +24,7 @@
             <li class="list-group-item"><strong>سنوات الخبرة:</strong> {{ $professional->experience_years }}</li>
             <li class="list-group-item"><strong>النبذة (Bio):</strong> {{ $professional->bio ?? 'لا يوجد' }}</li>
            
-            <li class="list-group-item"><strong>التصنيف:</strong> {{ $professional->rating ?? 'غير متوفر' }}</li>
+            <li class="list-group-item"><strong>التقييم:</strong> {{ $professional->rating ?? 'غير متوفر' }}</li>
         </ul>
 
         <!-- صورة العدة إذا موجودة -->
@@ -42,5 +42,4 @@
 
     </div>
 </div>
-
 @endsection

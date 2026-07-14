@@ -21,20 +21,8 @@ class ServiceRequestDetailsResource extends JsonResource
                 'name' => $this->category?->name,
             ],
 
-            'offers' => $this->offers->map(function ($offer) {
-                return [
-                    'offer_id' => $offer->offer_id,
-                    'price' => $offer->price,
-                    'details' => $offer->details,
-                    'eta' => $offer->eta,
-                    'status' => $offer->status,
-                    'professional' => [
-                        'id' => $offer->professional->professional_id,
-                        'name' => $offer->professional->user->name,
-                        'rating' => $offer->professional->rating,
-                    ]
-                ];
-            }),
+            // 🔥 هون التعديل
+            'offers' => \App\Http\Resources\OfferResource::collection($this->offers),
         ];
     }
 }
