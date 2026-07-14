@@ -21,7 +21,7 @@ use App\Http\Controllers\ReviewController;
 Route::get('/service-categories', [ServiceCategoryController::class, 'index']);
 
 // جلب المهنيين حسب التصنيف
-Route::post('/professionals', [ProfessionalController::class, 'getByCategory']);
+Route::get('/professionals', [ProfessionalController::class, 'getByCategory']);
 //المحافظات والمدن
 // جلب كل المحافظات
 Route::get('/governorates', [LocationController::class, 'governorates']);

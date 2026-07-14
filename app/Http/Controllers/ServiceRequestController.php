@@ -6,10 +6,11 @@ use Illuminate\Http\Request;
 use App\Models\ServiceRequest;
 use App\Http\Resources\ServiceRequestResource;
 use App\Http\Resources\ServiceRequestDetailsResource;
+use App\Models\Customer;
 
 class ServiceRequestController extends Controller
 {
-   //انشاء طلب جديد
+    //انشاء طلب جديد
     public function store(Request $request)
     {
         $customer = $request->user()->customer;
@@ -44,15 +45,20 @@ class ServiceRequestController extends Controller
         ]);
     }
 
-//جلب طلبات الزبون 
+    //جلب طلبات الزبون 
     public function index(Request $request)
     {
-        $customer = $request->user()->customer;
+        // جلب المستخدم من التوكن
+        $user = $request->user();
+
+        // جلب العميل المرتبط بالمستخدم
+        $customer = Customer::where('user_id', $user->user_id)->first();
 
         if (!$customer) {
             return response()->json(['message' => 'هذا المستخدم ليس زبون'], 403);
         }
 
+        // جلب الطلبات الخاصة بهذا العميل
         $requests = ServiceRequest::where('customer_id', $customer->customer_id)
             ->orderBy('created_at', 'desc')
             ->get();
@@ -105,7 +111,7 @@ class ServiceRequestController extends Controller
         ]);
     }
 
-//جلب الطلبات المتاحة للمهني 
+    //جلب الطلبات المتاحة للمهني 
     public function professionalRequests(Request $request)
     {
         $professional = $request->user()->professional;

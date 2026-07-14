@@ -145,7 +145,7 @@ class OfferController extends Controller
     }
 
     //رفض العرض
-    
+
     public function reject($request_id, $offer_id, Request $request)
     {
         $sr   = ServiceRequest::findOrFail($request_id);
@@ -182,13 +182,15 @@ class OfferController extends Controller
             ->get()
             ->map(function ($offer) {
                 return [
+                    'offer_id'    => $offer->offer_id,   
+                    'price'       => $offer->price,            
                     'date'        => $offer->created_at->format('Y-m-d'),
                     'status'      => $offer->status,
                     'request'     => $offer->request->description,
                     'customer'    => $offer->request->customer->user->name,
                     'location'    => $offer->request->customer->governorate->name . "، " . $offer->request->customer->city->name,
                     'offer_body'  => $offer->description,
-                    'duration' => $offer->duration,
+                    'duration'    => $offer->duration,
                     'category'    => $offer->request->category->name
                 ];
             });
