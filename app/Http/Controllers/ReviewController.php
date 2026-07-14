@@ -14,7 +14,7 @@ class ReviewController extends Controller
         $data = $request->validate([
             'request_id' => 'required|exists:service_requests,request_id',
             'rating'     => 'required|integer|min:1|max:10',
-            
+
         ]);
 
         // المستخدم من جدول users
@@ -73,6 +73,11 @@ class ReviewController extends Controller
     public function average($professional_id)
     {
         $average = Review::where('professional_id', $professional_id)->avg('rating');
+
+        // إذا ما في تقييمات → خلي الديفولت 5
+        if ($average === null) {
+            $average = 5;
+        }
 
         return response()->json([
             'professional_id' => $professional_id,

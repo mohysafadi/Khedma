@@ -29,6 +29,16 @@ class OfferController extends Controller
             return response()->json(['message' => 'غير مسموح لك بتقديم عرض على هذا الطلب'], 403);
         }
 
+        // ✔ جلب المحفظة
+        $wallet = $professional->wallet;
+
+        // ✔ منع إرسال العرض إذا الرصيد أقل من 100
+        if (!$wallet || $wallet->balance < 100) {
+            return response()->json([
+                'message' => 'لا يمكن إرسال العرض — رصيدك أقل من 100 ليرة سورية'
+            ], 403);
+        }
+
         // ✔ التحقق من الحقول الصحيحة
         $data = $request->validate([
             'description' => 'required|string',
@@ -36,7 +46,7 @@ class OfferController extends Controller
             'price'       => 'required|numeric'
         ]);
 
-        //  إنشاء العرض 
+        // ✔ إنشاء العرض
         $offer = Offer::create([
             'professional_id' => $professional->professional_id,
             'request_id'      => $sr->request_id,
@@ -51,7 +61,6 @@ class OfferController extends Controller
             'offer'   => new OfferResource($offer)
         ]);
     }
-
     //جلب تفاصيل عرض
     public function show($offer_id, Request $request)
     {
@@ -182,8 +191,8 @@ class OfferController extends Controller
             ->get()
             ->map(function ($offer) {
                 return [
-                    'offer_id'    => $offer->offer_id,   
-                    'price'       => $offer->price,            
+                    'offer_id'    => $offer->offer_id,
+                    'price'       => $offer->price,
                     'date'        => $offer->created_at->format('Y-m-d'),
                     'status'      => $offer->status,
                     'request'     => $offer->request->description,

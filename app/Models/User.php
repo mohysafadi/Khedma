@@ -12,8 +12,6 @@ use App\Models\Ban;
 // Import models
 use App\Models\Customer;
 use App\Models\Professional;
-
-use App\Models\Notification;
 use App\Models\ChatMessage;
 
 class User extends Authenticatable
