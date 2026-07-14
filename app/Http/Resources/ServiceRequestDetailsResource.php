@@ -21,7 +21,6 @@ class ServiceRequestDetailsResource extends JsonResource
                 'name' => $this->category?->name,
             ],
 
-            // 🔥 هون التعديل
             'offers' => \App\Http\Resources\OfferResource::collection($this->offers),
         ];
     }
