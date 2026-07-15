@@ -56,7 +56,19 @@ class AdminController extends Controller
     public function professionalDetails($id)
     {
         $professional = Professional::with('user')->findOrFail($id);
-        return view('admin.professional_details', compact('professional'));
+
+        // حساب متوسط التقييم
+        $average = \App\Models\Review::where('professional_id', $professional->professional_id)->avg('rating');
+
+        // إذا ما في تقييمات خلي الديفولت 5
+        if ($average === null) {
+            $average = 5;
+        }
+
+        return view('admin.professional_details', [
+            'professional' => $professional,
+            'average' => round($average, 2)
+        ]);
     }
     public function users()
     {

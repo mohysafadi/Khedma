@@ -24,11 +24,11 @@
             <li class="list-group-item"><strong>سنوات الخبرة:</strong> {{ $professional->experience_years }}</li>
             <li class="list-group-item"><strong>النبذة (Bio):</strong> {{ $professional->bio ?? 'لا يوجد' }}</li>
            
-            <li class="list-group-item"><strong>التقييم:</strong> {{ $professional->rating ?? 'غير متوفر' }}</li>
+            <li class="list-group-item"><strong>التقييم:</strong> {{ $average }}</li>
         </ul>
 
         <!-- صورة العدة إذا موجودة -->
-        <h4 class="mb-3">صورة العدة</h4>
+        <h4 class="mb-3">صورة الهوية</h4>
         @if($professional->tool_image)
             <img src="{{ asset('storage/' . $professional->tool_image) }}" 
                  alt="Tool Image" 
